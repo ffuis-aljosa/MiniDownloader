@@ -40,6 +40,8 @@ public class Downloader {
      * @returns void
      */
     public void download() {
+        // Ukoliko je proslijeđen null ili prazan URL, prijaviti grešku
+        // i izaći
         if (urlText == null || urlText.equals("")) {
             JOptionPane
                 .showMessageDialog(rootPane, "Niste unijeli URL!", "Upozorenje", JOptionPane.WARNING_MESSAGE);
@@ -49,6 +51,9 @@ public class Downloader {
         
         URL url;
         
+        // Pokušamo napraviti objekat klase URL od proslijeđenog teksta
+        // Ukoliko proslijeđeni tekst nije valida URL, prijavljujemo grešku
+        // i izlazimo
         try {
             url = new URL(urlText);
         } 
@@ -63,19 +68,33 @@ public class Downloader {
         FileOutputStream fout = null;
         
         try {
+            // Pokušamo se "zakačiti" na URL
             in = new BufferedInputStream(url.openStream());
             
+            // Izvučemo naziv datoteke iz URL-a i pokušamo
+            // napraviti datoteku na napem sistemu sa tim imenom.
+            // Po default-u će se datoteka napraviti u direktorijumu gdje
+            // je program.
             // Metodu extractFileName smo mi napisali ispod
             fout = new FileOutputStream(extractFileName(url.getFile()));
             
+            // Bafer koji ćemo puniti podacima sa inputStream-a i iz kog ćemo
+            // kopirati podatke u outputStream
             byte buffer[] = new byte[1024];
             
             int downloaded;
             
+            // in.read(buffer) čita maksimalan mogući broj bajtova sa inputStream-a
+            // u bafer.
+            // Broj pročitanih bajtova se spašava u downloaded.
+            // downloaded će biti -1 ukoliko više nema šta da se pročita.
             while ((downloaded = in.read(buffer)) != -1) {
+                // Na outputStream ispisujemo iz bafera
+                // od počekta do broja pročitanih bajtova
                 fout.write(buffer, 0, downloaded);
             }
             
+            // Ukoliko smo došli do ovde sve je prošlo kako treba (nadamo se)
             JOptionPane
                 .showMessageDialog(rootPane, "Uspješno preuzeta datoteka", "Info", JOptionPane.INFORMATION_MESSAGE);
         } 
