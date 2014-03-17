@@ -4,15 +4,6 @@
  */
 package minidowloader;
 
-import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-
 /**
  *
  * @author Korisnik
@@ -91,93 +82,15 @@ public class NasProzor extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String urlText = jTextField1.getText();
         
-        if (urlText == null || urlText.equals("")) {
-            JOptionPane
-                    .showMessageDialog(rootPane, "Niste unijeli URL!",
-                    "Upozorenje", JOptionPane.WARNING_MESSAGE);
-            
-            return;
-        }
+        // Sva logika preuzimanja datoteke premještena u posebnu klasu Downloader
+        // Konstruktoru proslijeđujemo URL kojem želimo da pristupimo i
+        // rootPane zbog JOptionPane.showMessageDialog poziva
         
-        URL url;
-        
-        try {
-            url = new URL(urlText);
-        } 
-        catch (MalformedURLException ex) {
-            JOptionPane
-                    .showMessageDialog(rootPane, "Uneseni URL nije validan!",
-                    "Upozorenje", JOptionPane.ERROR_MESSAGE);
-            
-            return;
-        }
-        
-        BufferedInputStream in = null;
-        FileOutputStream fout = null;
-        
-        try {
-            in = new BufferedInputStream(url.openStream());
-            fout = new FileOutputStream("fajl.jpg");
-            
-            byte buffer[] = new byte[1024];
-            
-            int downloaded = 0;
-            
-            while ((downloaded = in.read(buffer)) != -1) {
-                fout.write(buffer);
-            }
-        } 
-        catch (Exception e) {
-            
-        }
-        finally {
-            try {
-                in.close();
-            } catch (IOException ex) {
-            }
-            try {
-                fout.close();
-            } catch (IOException ex) {
-            }
-        }
+        Downloader downloader = new Downloader(jTextField1.getText(), rootPane);
+        downloader.download();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(NasProzor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(NasProzor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(NasProzor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(NasProzor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new NasProzor().setVisible(true);
-            }
-        });
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
