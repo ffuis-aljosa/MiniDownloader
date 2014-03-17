@@ -1,6 +1,7 @@
 package minidowloader;
 
 import java.awt.Component;
+import java.awt.HeadlessException;
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,7 +13,7 @@ import javax.swing.JOptionPane;
  *
  * Klasa koja se bavi preuzimanjem datoteke putem Neta.
  * 
- * @author      Sljuka  <a.sljuka@ffuis.edu.ba>
+ * @author      Aljoša Šljuka  <a.sljuka@ffuis.edu.ba>
  * @version     0.1
  * @since       2014-03-17
  * 
@@ -72,7 +73,7 @@ public class Downloader {
             in = new BufferedInputStream(url.openStream());
             
             // Izvučemo naziv datoteke iz URL-a i pokušamo
-            // napraviti datoteku na napem sistemu sa tim imenom.
+            // napraviti datoteku na našem sistemu sa tim imenom.
             // Po default-u će se datoteka napraviti u direktorijumu gdje
             // je program.
             // Metodu extractFileName smo mi napisali ispod
@@ -98,10 +99,14 @@ public class Downloader {
             JOptionPane
                 .showMessageDialog(rootPane, "Uspješno preuzeta datoteka", "Info", JOptionPane.INFORMATION_MESSAGE);
         } 
-        catch (Exception e) {
+        catch (IOException e) {
             JOptionPane
-                .showMessageDialog(rootPane, e.getMessage(), "Upozorenje", JOptionPane.ERROR_MESSAGE);
+                .showMessageDialog(rootPane, e.toString(), "Upozorenje", JOptionPane.ERROR_MESSAGE);
         }
+        // finally blok se uvijek izvršava, bez obzira da li je try prošao
+        // bez grešaka ili je greška uhvaćena u catch.
+        // To možemo iskoristiti za operacije "čišćenja", kao recimo
+        // zatvaranje stream-ova
         finally {
             try {
                 if (in != null)
@@ -121,7 +126,7 @@ public class Downloader {
      * Izvlači naziv datoteke iz URL-a.
      * <p>
      * Primjer:
-     * Za URL = "www.moj-sajt-com/put/do/slike/slika.jpg"
+     * Za URL = "www.moj-sajt.com/put/do/slike/slika.jpg"
      * rezultat je "slika.jpg"
      * 
      * @param url   Čitav URL iz kojeg treba da se izvuče naziv datoteke.

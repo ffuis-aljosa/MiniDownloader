@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 
 /**
  *
- * @author Korisnik
+ * @author Aljoša Šljuka
  */
 public class MiniDowloader {
 
@@ -19,5 +19,6 @@ public class MiniDowloader {
         NasProzor np = new NasProzor();
         np.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         np.setVisible(true);
+        np.setResizable(false);
     }
 }

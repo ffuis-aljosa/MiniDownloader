@@ -6,7 +6,7 @@ package minidowloader;
 
 /**
  *
- * @author Korisnik
+ * @author Aljoša Šljuka
  */
 public class NasProzor extends javax.swing.JFrame {
 
@@ -26,25 +26,20 @@ public class NasProzor extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextField1 = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        urlTextField = new javax.swing.JTextField();
+        urlLabel = new javax.swing.JLabel();
+        downloadBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTextField1.setToolTipText("");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
+        urlTextField.setToolTipText("");
 
-        jLabel1.setText("URL");
+        urlLabel.setText("URL");
 
-        jButton1.setLabel("PREUZMI");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        downloadBtn.setLabel("PREUZMI");
+        downloadBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                downloadBtnActionPerformed(evt);
             }
         });
 
@@ -55,11 +50,11 @@ public class NasProzor extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(54, 54, 54)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(downloadBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addComponent(urlLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(urlTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(75, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -67,33 +62,29 @@ public class NasProzor extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(52, 52, 52)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addGap(36, 36, 36)
-                .addComponent(jButton1)
-                .addContainerGap(169, Short.MAX_VALUE))
+                    .addComponent(urlTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(urlLabel))
+                .addGap(39, 39, 39)
+                .addComponent(downloadBtn)
+                .addContainerGap(166, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void downloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadBtnActionPerformed
         
         // Sva logika preuzimanja datoteke premještena u posebnu klasu Downloader
         // Konstruktoru proslijeđujemo URL kojem želimo da pristupimo i
         // rootPane zbog JOptionPane.showMessageDialog poziva
         
-        Downloader downloader = new Downloader(jTextField1.getText(), rootPane);
+        Downloader downloader = new Downloader(urlTextField.getText(), rootPane);
         downloader.download();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_downloadBtnActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JButton downloadBtn;
+    private javax.swing.JLabel urlLabel;
+    private javax.swing.JTextField urlTextField;
     // End of variables declaration//GEN-END:variables
 }
