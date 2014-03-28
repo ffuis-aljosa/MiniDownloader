@@ -205,7 +205,7 @@ public class Downloader {
      * rezultat je "jpg"
      * 
      * @param url   Naziv datoteke iz kojeg treba da se izvuče ekstenzija
-     * @return Podstring proslijeđenog stringa od poslijednjeg ponavljanja '.' do kraja. Ukoliko tačka ne postoji, vraća se čitav string.
+     * @return Podstring proslijeđenog stringa od poslijednjeg ponavljanja '.' do kraja. Ukoliko tačka ne postoji, vraća se prazan string.
      */
     private String extractExtension(String filename) {
         int lastIndexOfDot = filename.lastIndexOf('.');
