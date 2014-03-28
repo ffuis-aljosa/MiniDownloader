@@ -1,13 +1,15 @@
 package minidowloader;
 
 import java.awt.Component;
-import java.awt.HeadlessException;
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 
 /**
  *
@@ -21,6 +23,7 @@ import javax.swing.JOptionPane;
 public class Downloader {
     private String urlText;
     private Component rootPane;
+    private JProgressBar progress;
     
     /**
      * Jedini konstruktor klase. Inicijalizuje arrgumente.
@@ -28,9 +31,10 @@ public class Downloader {
      * @param  urlText   tekst koji predstavlja URL datoteke koju želimo da preuzmemo
      * @param  rootPane  Komponenta (prozor) koja je odgovorna za prikazivanje MessageDialog-a
      */
-    public Downloader(String urlText, Component rootPane) {
+    public Downloader(String urlText, Component rootPane, JProgressBar progress) {
         this.urlText = urlText;
         this.rootPane = rootPane;
+        this.progress = progress;
     }
     
     /**
@@ -69,20 +73,32 @@ public class Downloader {
         FileOutputStream fout = null;
         
         try {
+            JFileChooser chooser = new JFileChooser();
+            
+            URLConnection conn = url.openConnection();
+            
             // Pokušamo se "zakačiti" na URL
-            in = new BufferedInputStream(url.openStream());
+            in = new BufferedInputStream(conn.getInputStream());
             
             // Izvučemo naziv datoteke iz URL-a i pokušamo
             // napraviti datoteku na našem sistemu sa tim imenom.
             // Po default-u će se datoteka napraviti u direktorijumu gdje
             // je program.
             // Metodu extractFileName smo mi napisali ispod
-            fout = new FileOutputStream(extractFileName(url.getFile()));
+            
+            
+            int result = chooser.showDialog(rootPane, "OK");
+            
+            if (result == JFileChooser.APPROVE_OPTION) {
+                fout = new FileOutputStream(chooser.getName(chooser.getSelectedFile()));
+            }
             
             // Bafer koji ćemo puniti podacima sa inputStream-a i iz kog ćemo
             // kopirati podatke u outputStream
             byte buffer[] = new byte[1024];
             
+            int totalSize = conn.getContentLength();
+            int totalDownloaded = 0;
             int downloaded;
             
             // in.read(buffer) čita maksimalan mogući broj bajtova sa inputStream-a
@@ -93,7 +109,13 @@ public class Downloader {
                 // Na outputStream ispisujemo iz bafera
                 // od počekta do broja pročitanih bajtova
                 fout.write(buffer, 0, downloaded);
+                
+                totalDownloaded += downloaded;
+                
+                progress.setValue((int)((double)totalDownloaded / totalSize * 100));
             }
+            
+            progress.setValue(0);
             
             // Ukoliko smo došli do ovde sve je prošlo kako treba (nadamo se)
             JOptionPane

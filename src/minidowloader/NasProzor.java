@@ -29,6 +29,7 @@ public class NasProzor extends javax.swing.JFrame {
         urlTextField = new javax.swing.JTextField();
         urlLabel = new javax.swing.JLabel();
         downloadBtn = new javax.swing.JButton();
+        pbDownload = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -43,6 +44,8 @@ public class NasProzor extends javax.swing.JFrame {
             }
         });
 
+        pbDownload.setStringPainted(true);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -54,7 +57,8 @@ public class NasProzor extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(urlLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(urlTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(urlTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pbDownload, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(75, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -66,7 +70,9 @@ public class NasProzor extends javax.swing.JFrame {
                     .addComponent(urlLabel))
                 .addGap(39, 39, 39)
                 .addComponent(downloadBtn)
-                .addContainerGap(166, Short.MAX_VALUE))
+                .addGap(55, 55, 55)
+                .addComponent(pbDownload, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(94, Short.MAX_VALUE))
         );
 
         pack();
@@ -78,12 +84,25 @@ public class NasProzor extends javax.swing.JFrame {
         // Konstruktoru proslijeđujemo URL kojem želimo da pristupimo i
         // rootPane zbog JOptionPane.showMessageDialog poziva
         
-        Downloader downloader = new Downloader(urlTextField.getText(), rootPane);
-        downloader.download();
+        Thread t = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                Downloader downloader = 
+                        new Downloader(urlTextField.getText(), rootPane, pbDownload);
+                
+                downloadBtn.setEnabled(false);
+                downloader.download();
+                downloadBtn.setEnabled(true);
+            }
+        });
+        
+        t.start();
     }//GEN-LAST:event_downloadBtnActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton downloadBtn;
+    private javax.swing.JProgressBar pbDownload;
     private javax.swing.JLabel urlLabel;
     private javax.swing.JTextField urlTextField;
     // End of variables declaration//GEN-END:variables
