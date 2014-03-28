@@ -1,9 +1,14 @@
 package minidowloader;
 
 import java.awt.Component;
+import java.awt.Dialog;
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -69,37 +74,34 @@ public class Downloader {
             return;
         }
         
-        BufferedInputStream in = null;
-        FileOutputStream fout = null;
+        InputStream in = null;
+        ByteArrayOutputStream out = null;
         
-        try {
-            JFileChooser chooser = new JFileChooser();
-            
+        try {            
+            // Otvorimo konekciju prema URL-u
+            // Izbacuje grešku ako je resurs nedostupan (npr. nema konekcije na Internet)
             URLConnection conn = url.openConnection();
             
-            // Pokušamo se "zakačiti" na URL
+            // Otvorimo stream za čitanje
             in = new BufferedInputStream(conn.getInputStream());
             
-            // Izvučemo naziv datoteke iz URL-a i pokušamo
-            // napraviti datoteku na našem sistemu sa tim imenom.
-            // Po default-u će se datoteka napraviti u direktorijumu gdje
-            // je program.
-            // Metodu extractFileName smo mi napisali ispod
-            
-            
-            int result = chooser.showDialog(rootPane, "OK");
-            
-            if (result == JFileChooser.APPROVE_OPTION) {
-                fout = new FileOutputStream(chooser.getName(chooser.getSelectedFile()));
-            }
+            // Ovaj tip output stream-a piše direktno u RAM (u jedan niz bajtova)
+            // Mi ćemo našu datoteku preuzeti prvo u RAM, pa onda sačuvati u
+            // fajl na našem sistemu
+            out = new ByteArrayOutputStream();
             
             // Bafer koji ćemo puniti podacima sa inputStream-a i iz kog ćemo
             // kopirati podatke u outputStream
             byte buffer[] = new byte[1024];
             
+            // Ukupna veličina datoteke
             int totalSize = conn.getContentLength();
+            // Koliko smo do sad preuzeli
             int totalDownloaded = 0;
             int downloaded;
+            
+            // Osiguravamo da je progressBar postavljen na 0
+            progress.setValue(0);
             
             // in.read(buffer) čita maksimalan mogući broj bajtova sa inputStream-a
             // u bafer.
@@ -108,14 +110,40 @@ public class Downloader {
             while ((downloaded = in.read(buffer)) != -1) {
                 // Na outputStream ispisujemo iz bafera
                 // od počekta do broja pročitanih bajtova
-                fout.write(buffer, 0, downloaded);
+                out.write(buffer, 0, downloaded);
                 
+                // Progres prikazujemo na progressBar-u
                 totalDownloaded += downloaded;
-                
                 progress.setValue((int)((double)totalDownloaded / totalSize * 100));
             }
             
-            progress.setValue(0);
+            // Kada je preuzimanje gotovo, korisniku se nudi opcija da sačuva
+            // datoteku na svoj sistem
+            JFileChooser chooser = new JFileChooser();
+            chooser.setMultiSelectionEnabled(false);
+            
+            // Uzmemo originalni naziv datoteke
+            String filename = extractFileName(urlText);
+            // I njegovu ekstenziju
+            String extension = extractExtension(filename);
+            
+            // Predložimo korisniku originalni naziv
+            chooser.setSelectedFile(new File(filename));
+            int result = chooser.showDialog(rootPane, "OK");
+            
+            // Ukoliko je korisnik kliknuo "OK"...
+            if (result == JFileChooser.APPROVE_OPTION) {
+                // Uzmemo datoteku u koju korisnik hoće da sačuva
+                File fileToSave = chooser.getSelectedFile();
+                
+                // Ne damo korisniku da sačuva datoteku pod drugom ekstenzijom
+                // Ukoliko je sačuvao pod drugom ekstenzijom, na nju dodamo originalnu
+                if (!extractExtension(fileToSave.getName()).equals(extension))
+                    fileToSave = new File(fileToSave.getPath() + "." + extension);
+                
+                // Ispišemo iz našeg niza bajtova u datoteku
+                out.writeTo(new FileOutputStream(fileToSave));
+            }
             
             // Ukoliko smo došli do ovde sve je prošlo kako treba (nadamo se)
             JOptionPane
@@ -134,8 +162,8 @@ public class Downloader {
                 if (in != null)
                     in.close();
                 
-                if (fout != null)
-                    fout.close();
+                if (out != null)
+                    out.close();
             } 
             catch (IOException ex) {
                 JOptionPane
@@ -167,5 +195,25 @@ public class Downloader {
         }
         
         return result;
+    }
+    
+    /**
+     * Izvlači ekstenziju iz naziva datoteke.
+     * <p>
+     * Primjer:
+     * Za naziv datoteke "slika.jpg"
+     * rezultat je "jpg"
+     * 
+     * @param url   Naziv datoteke iz kojeg treba da se izvuče ekstenzija
+     * @return Podstring proslijeđenog stringa od poslijednjeg ponavljanja '.' do kraja. Ukoliko tačka ne postoji, vraća se čitav string.
+     */
+    private String extractExtension(String filename) {
+        int lastIndexOfDot = filename.lastIndexOf('.');
+        
+        if (lastIndexOfDot < 0)
+            return "";
+        
+        else
+            return filename.substring(lastIndexOfDot + 1);
     }
 }
